@@ -1,7 +1,11 @@
 # -*- mode: python; coding: utf-8; -*-
 
 from django.http import HttpResponse
-from django.utils import simplejson
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 
 class JsonResponse(HttpResponse):
@@ -9,10 +13,12 @@ class JsonResponse(HttpResponse):
     HttpResponse descendant, which return response with ``application/json`` mimetype.
     """
     def __init__(self, data):
-        super(JsonResponse, self).__init__(content=simplejson.dumps(data), mimetype='application/json')
+        super(JsonResponse, self).__init__(content=json.dumps(data), mimetype='application/json')
+
 
 def as_json(errors):
     return dict((k, map(unicode, v)) for k, v in errors.items())
+
 
 def ajax_request(func):
     """

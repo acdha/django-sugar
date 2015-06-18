@@ -4,9 +4,14 @@ Extensions for the Django template system
 from django import template
 from django.core.serializers import serialize
 from django.db.models.query import QuerySet
-from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
+
 
 register = template.Library()
 
@@ -102,6 +107,6 @@ def as_json(val):
     if isinstance(object, QuerySet):
         v = serialize('json', val)
     else:
-        v = simplejson.dumps(val)
+        v = json.dumps(val)
 
     return mark_safe(v)

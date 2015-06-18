@@ -1,17 +1,22 @@
 # encoding: utf-8
+from __future__ import print_function
 
+import inspect
 import os
 import re
-import inspect
+import sys
 import time
 import uuid
-import sys
 import warnings
 
 from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponse
-from django.utils import simplejson
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 
 class SpeedTracerMiddleware(object):
@@ -81,12 +86,7 @@ class SpeedTracerMiddleware(object):
             return # No trace
 
         if self.DEBUG:
-            print "%s: %s %s[%s]" % (
-                event,
-                frame.f_code.co_name,
-                frame.f_code.co_filename,
-                frame.f_lineno,
-            )
+            print("%s: %s %s[%s]" % (event, frame.f_code.co_name, frame.f_code.co_filename, frame.f_lineno))
 
         if event == 'call':
             code = frame.f_code
@@ -150,7 +150,7 @@ class SpeedTracerMiddleware(object):
 
         data = cache.get(trace_id, {})
 
-        return HttpResponse(simplejson.dumps(data), mimetype="application/json; charset=UTF-8")
+        return HttpResponse(json.dumps(data), mimetype="application/json; charset=UTF-8")
 
     def process_response(self, request, response):
         sys.settrace(None)
